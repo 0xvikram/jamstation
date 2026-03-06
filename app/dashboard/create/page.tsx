@@ -1,99 +1,163 @@
-import { ArrowLeft, Calendar, DollarSign, FileText, Music } from "lucide-react";
+"use client";
+
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Calendar, DollarSign, FileText, Loader2, Music } from "lucide-react";
 import Link from "next/link";
 
 export default function CreateSessionPage() {
-    return (
-        <div className="max-w-2xl mx-auto py-8">
-            <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white mb-8 transition-colors">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-            </Link>
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-            <div className="bg-slate-900 border border-white/5 rounded-2xl p-8 relative overflow-hidden shadow-2xl">
-                {/* Decorative glow */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-                <div className="relative z-10">
-                    <h1 className="text-3xl font-extrabold mb-2">Host a Session</h1>
-                    <p className="text-slate-400 mb-8">Set up your digital stage and let the world hear your sound.</p>
+    const form = e.currentTarget;
+    const data = {
+      title: (form.elements.namedItem("title") as HTMLInputElement).value,
+      description: (form.elements.namedItem("description") as HTMLTextAreaElement).value || null,
+      startTime: (form.elements.namedItem("startTime") as HTMLInputElement).value,
+      entryFee: Number((form.elements.namedItem("entryFee") as HTMLInputElement).value ?? 0),
+    };
 
-                    <form className="space-y-6">
-                        {/* Title */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Session Title</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                                    <Music className="w-5 h-5" />
-                                </div>
-                                <input
-                                    type="text"
-                                    className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium mb-1"
-                                    placeholder="e.g. Late Night Jazz Improv"
-                                    required
-                                />
-                            </div>
-                        </div>
+    try {
+      const res = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-                        {/* Description */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Description <span className="text-slate-500">(Optional)</span></label>
-                            <div className="relative">
-                                <div className="absolute top-3 left-3 flex items-center pointer-events-none text-slate-500">
-                                    <FileText className="w-5 h-5" />
-                                </div>
-                                <textarea
-                                    className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium min-h-[100px] resize-none pb-1"
-                                    placeholder="What are we jamming tonight?"
-                                ></textarea>
-                            </div>
-                        </div>
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error ?? "Failed to create session");
+      }
 
-                        {/* Date & Time */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Start Time</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                                    <Calendar className="w-5 h-5" />
-                                </div>
-                                <input
-                                    type="datetime-local"
-                                    className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium [color-scheme:dark]"
-                                    required
-                                />
-                            </div>
-                        </div>
+      const session = await res.json();
+      router.push(`/sessions/${session.id}`);
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }
 
-                        {/* Entry Fee */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Entry Fee ($)</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                                    <DollarSign className="w-5 h-5" />
-                                </div>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    defaultValue="0"
-                                    className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-emerald-400 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold"
-                                />
-                            </div>
-                            <p className="text-xs text-slate-500 mt-2">Leave at $0 for free sessions to grow your audience faster.</p>
-                        </div>
+  return (
+    <div className="max-w-2xl mx-auto py-8">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white mb-8 transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+      </Link>
 
-                        <hr className="border-white/5 py-2" />
+      <div className="bg-slate-900 border border-white/5 rounded-2xl p-8 relative overflow-hidden shadow-2xl">
+        {/* Decorative glow */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] pointer-events-none"></div>
 
-                        {/* Submit */}
-                        <div className="flex justify-end gap-3 pt-4">
-                            <Link href="/dashboard" className="px-6 py-3 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
-                                Cancel
-                            </Link>
-                            <button type="submit" className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white font-bold shadow-lg shadow-indigo-500/25 transition-all">
-                                Launch Stage
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-extrabold mb-2">Host a Session</h1>
+          <p className="text-slate-400 mb-8">Set up your digital stage and let the world hear your sound.</p>
+
+          {error && (
+            <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
+              {error}
             </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Session Title</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                  <Music className="w-5 h-5" />
+                </div>
+                <input
+                  name="title"
+                  type="text"
+                  className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+                  placeholder="e.g. Late Night Jazz Improv"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Description <span className="text-slate-500">(Optional)</span>
+              </label>
+              <div className="relative">
+                <div className="absolute top-3 left-3 flex items-center pointer-events-none text-slate-500">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <textarea
+                  name="description"
+                  className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium min-h-[100px] resize-none"
+                  placeholder="What are we jamming tonight?"
+                />
+              </div>
+            </div>
+
+            {/* Date & Time */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Start Time</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <input
+                  name="startTime"
+                  type="datetime-local"
+                  className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium [color-scheme:dark]"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Entry Fee */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Entry Fee ($)</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <input
+                  name="entryFee"
+                  type="number"
+                  min="0"
+                  step="1"
+                  defaultValue="0"
+                  className="block w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border border-white/10 text-emerald-400 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-bold"
+                />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">Leave at $0 for free sessions to grow your audience faster.</p>
+            </div>
+
+            <hr className="border-white/5 py-2" />
+
+            {/* Submit */}
+            <div className="flex justify-end gap-3 pt-4">
+              <Link
+                href="/dashboard"
+                className="px-6 py-3 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </Link>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white font-bold shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Launching…" : "Launch Stage"}
+              </button>
+            </div>
+          </form>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
