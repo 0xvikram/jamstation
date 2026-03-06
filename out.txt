@@ -1,0 +1,2 @@
+app/dashboard/layout.tsx(2,53): error TS2724: '"lucide-react"' has no exported member named 'User1'. Did you mean 'User'?
+lib/prisma.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.

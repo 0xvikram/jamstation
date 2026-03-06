@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/client" // Required in v7
+}
+
+// Add a test model to verify
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  username       String   @unique
+  name           String?
+  avatarUrl      String?
+  voiceSampleUrl String? // Optional: For the "Pro Singer" verification
+  bio            String?
+  createdAt      DateTime @default(now())
+
+  // Relationships
+  hostedSessions  Session[]      @relation("HostRelation")
+  requests        StageRequest[]
+  receivedRatings Rating[]       @relation("RatedUser")
+  givenRatings    Rating[]       @relation("RatingAuthor")
+}
+
+model Session {
+  id          String        @id @default(uuid())
+  title       String
+  description String?
+  status      SessionStatus @default(UPCOMING) // UPCOMING, LIVE, ENDED
+  entryFee    Float         @default(0)
+  startTime   DateTime
+  createdAt   DateTime      @default(now())
+
+  // Host
+  hostId String
+  host   User   @relation("HostRelation", fields: [hostId], references: [id])
+
+  // Audience & Stage
+  requests StageRequest[]
+  ratings  Rating[]
+}
+
+model StageRequest {
+  id        String        @id @default(uuid())
+  status    RequestStatus @default(PENDING) // PENDING, APPROVED, REJECTED
+  createdAt DateTime      @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id])
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  score     Int // 1 to 5
+  comment   String?
+  createdAt DateTime @default(now())
+
+  // Who is being rated
+  ratedUserId String
+  ratedUser   User   @relation("RatedUser", fields: [ratedUserId], references: [id])
+
+  // Who is giving the rating
+  authorId String
+  author   User   @relation("RatingAuthor", fields: [authorId], references: [id])
+
+  // Link to specific session
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id])
+}
+
+enum SessionStatus {
+  UPCOMING
+  LIVE
+  ENDED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
