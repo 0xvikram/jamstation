@@ -1,7 +1,8 @@
 import { auth, signIn } from "@/auth";
-import { Mic2, Users, Radio, ArrowRight, Play, Headphones, Music, ShieldCheck } from "lucide-react";
+import { Mic2, Users, Radio, ArrowRight, Play, Headphones, Music, ShieldCheck, Flame, Zap, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default async function LandingPage() {
   const session = await auth();
@@ -12,130 +13,215 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30 font-sans tracking-tight">
+    <div className="min-h-screen bg-black text-white selection:bg-fuchsia-500/50 selection:text-white font-sans overflow-x-hidden">
       {/* Dynamic Background */}
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-neutral-950 to-neutral-950"></div>
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,_#3b0764_0%,_#000000_60%)]"></div>
+
+      {/* Abstract Glowing Orbs */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-cyan-500/20 blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-fuchsia-600/20 blur-[150px]"></div>
+        <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full bg-lime-400/10 blur-[100px]"></div>
+      </div>
 
       {/* Navigation */}
-      <nav className="border-b border-white/5 bg-black/20 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Mic2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+      <nav className="border-b border-white/10 bg-black/40 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/jamstation-logo.png"
+              alt="JamStation Logo"
+              width={50}
+              height={50}
+              className="drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]"
+            />
+            <span className="font-black text-2xl tracking-tighter uppercase italic bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-lime-400 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(217,70,239,0.5)]">
               JamStation
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <SignInButton />
+            <SignInButton label="Log In" size="sm" isSecondary />
+            <SignInButton label="Sign Up" size="sm" />
           </div>
         </div>
       </nav>
 
       <main>
         {/* Hero Section */}
-        <section className="relative px-6 pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden">
-          {/* Decorative glows */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-indigo-500/20 opacity-50 blur-[120px] rounded-full point-events-none"></div>
+        <section className="relative px-6 pt-24 pb-32 md:pt-40 md:pb-40 overflow-hidden">
+          <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-indigo-300 mb-8 backdrop-blur-sm">
-              <Radio className="w-4 h-4 animate-pulse text-indigo-400" />
-              <span>The definitive platform for live jam sessions</span>
+            {/* Vibe Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/50 border border-fuchsia-500/30 text-sm font-bold text-fuchsia-400 mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(217,70,239,0.3)]">
+              <Zap className="w-4 h-4 text-lime-400 animate-pulse" />
+              <span className="tracking-wide uppercase">The global stage is yours</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
-              <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">
-                Your Digital Stage,
+            <h1 className="text-6xl md:text-8xl md:leading-[1.1] font-black uppercase tracking-tighter mb-8">
+              <span className="block text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                Sync Your Sound.
               </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 mt-2">
-                Synchonized Perfectly.
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-lime-400 mt-2 filter drop-shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:scale-[1.02] transition-transform duration-300">
+                Rule The Stage.
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Experience zero-latency live music collaboration. Connect with fellow musicians, perform for a global audience, and monetize your talent—all in real-time.
+            <p className="text-xl md:text-2xl text-neutral-300 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+              Zero-latency global jamming. Connect, perform, and blow minds in real-time. Drop the aux, pick up the mic.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <SignInButton label="Start Jamming Now" size="lg" />
-              <button className="px-8 py-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-all duration-300 flex items-center gap-2">
-                <Play className="w-5 h-5" />
-                See How It Works
-              </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
+              <SignInButton label="SIGN UP TO JAM" size="lg" />
+              <SignInButton label="LOG IN" size="lg" isSecondary />
             </div>
+
+            {/* Stats / Social Proof */}
+            <div className="mt-20 pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl mx-auto">
+              <div className="flex flex-col items-center">
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 to-cyan-600">50ms</span>
+                <span className="text-sm font-bold text-neutral-500 uppercase tracking-widest mt-2">Max Latency</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-fuchsia-400 to-pink-600">10k+</span>
+                <span className="text-sm font-bold text-neutral-500 uppercase tracking-widest mt-2">Live Jams</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-lime-300 to-green-600">24/7</span>
+                <span className="text-sm font-bold text-neutral-500 uppercase tracking-widest mt-2">Uptime</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-4xl font-black text-white">$0</span>
+                <span className="text-sm font-bold text-neutral-500 uppercase tracking-widest mt-2">To Start</span>
+              </div>
+            </div>
+
           </div>
         </section>
 
-        {/* Feature Grid */}
-        <section className="px-6 py-24 bg-black/40 border-y border-white/5">
+        {/* Features / Neon Cards */}
+        <section className="px-6 py-32 bg-black relative">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-fuchsia-500/50 to-transparent"></div>
+
           <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight italic">
+                <span className="text-white">Why Play </span>
+                <span className="text-lime-400 drop-shadow-[0_0_10px_rgba(163,230,53,0.5)]">Solo?</span>
+              </h2>
+            </div>
+
             <div className="grid md:grid-cols-3 gap-8">
               {/* Feature 1 */}
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-colors group">
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-6 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/30 transition-all">
-                  <Headphones className="w-6 h-6" />
+              <div className="p-8 rounded-3xl bg-neutral-900/50 border border-cyan-500/20 hover:border-cyan-400 hover:bg-cyan-950/20 hover:-translate-y-2 transition-all duration-300 group shadow-[0_0_0_rgba(6,182,212,0)] hover:shadow-[0_10px_30px_rgba(6,182,212,0.2)]">
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-8 border border-cyan-500/30 group-hover:scale-110 group-hover:bg-cyan-500/20 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-all">
+                  <Headphones className="w-8 h-8 text-cyan-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Ultra-Low Latency</h3>
-                <p className="text-neutral-400 leading-relaxed">
-                  Powered by WebRTC, experience real-time audio synchronization under 50ms. Like being in the same room.
+                <h3 className="text-2xl font-black uppercase tracking-wide mb-4 text-white">Hyper-Sync Audio</h3>
+                <p className="text-neutral-400 font-medium leading-relaxed">
+                  WebRTC powered magic. Under 50ms latency means you stay in the pocket, no matter where your drummer lives.
                 </p>
               </div>
 
               {/* Feature 2 */}
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-colors group">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/30 transition-all">
-                  <Users className="w-6 h-6" />
+              <div className="p-8 rounded-3xl bg-neutral-900/50 border border-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-950/20 hover:-translate-y-2 transition-all duration-300 group shadow-[0_0_0_rgba(217,70,239,0)] hover:shadow-[0_10px_30px_rgba(217,70,239,0.2)]">
+                <div className="w-16 h-16 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center mb-8 border border-fuchsia-500/30 group-hover:scale-110 group-hover:bg-fuchsia-500/20 group-hover:shadow-[0_0_15px_rgba(217,70,239,0.5)] transition-all">
+                  <Flame className="w-8 h-8 text-fuchsia-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Instant Audience</h3>
-                <p className="text-neutral-400 leading-relaxed">
-                  Go live to discovery feeds. Monetize your digital stage with simple entry fees and tipping systems.
+                <h3 className="text-2xl font-black uppercase tracking-wide mb-4 text-white">Monetize The Hype</h3>
+                <p className="text-neutral-400 font-medium leading-relaxed">
+                  Go live. Drop virtual tickets. Get tipped in real-time. Turn your bedroom jams into paid gigs instantly.
                 </p>
               </div>
 
               {/* Feature 3 */}
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-pink-500/30 transition-colors group">
-                <div className="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mb-6 text-pink-400 group-hover:scale-110 group-hover:bg-pink-500/30 transition-all">
-                  <ShieldCheck className="w-6 h-6" />
+              <div className="p-8 rounded-3xl bg-neutral-900/50 border border-lime-500/20 hover:border-lime-400 hover:bg-lime-950/20 hover:-translate-y-2 transition-all duration-300 group shadow-[0_0_0_rgba(163,230,53,0)] hover:shadow-[0_10px_30px_rgba(163,230,53,0.2)]">
+                <div className="w-16 h-16 rounded-2xl bg-lime-500/10 flex items-center justify-center mb-8 border border-lime-500/30 group-hover:scale-110 group-hover:bg-lime-500/20 group-hover:shadow-[0_0_15px_rgba(163,230,53,0.5)] transition-all">
+                  <ShieldCheck className="w-8 h-8 text-lime-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Vetted Performers</h3>
-                <p className="text-neutral-400 leading-relaxed">
-                  Voice sample verification ensures high-quality performances. Powerful host controls keep sessions secure.
+                <h3 className="text-2xl font-black uppercase tracking-wide mb-4 text-white">Troll-Free Zones</h3>
+                <p className="text-neutral-400 font-medium leading-relaxed">
+                  AI-backed audio scanning and hard-kick moderation tools. Keep the vibes immaculate and the music loud.
                 </p>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Banner Section */}
+        <section className="py-24 relative overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-600 via-purple-700 to-cyan-600 opacity-20"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-30 mix-blend-overlay"></div>
+
+          <div className="relative z-10 text-center px-6">
+            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-8 text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+              Ready to break the internet?
+            </h2>
+            <div className="flex justify-center flex-col sm:flex-row gap-4 items-center">
+              <SignInButton label="CREATE ACCOUNT" size="lg" />
+              <SignInButton label="LOG IN" size="lg" isSecondary />
+            </div>
+          </div>
+        </section>
+
       </main>
 
-      <footer className="border-t border-white/5 py-12 text-center text-sm text-neutral-500">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Music className="w-4 h-4" />
-          <span className="font-medium text-neutral-400">JamStation v1.0</span>
+      <footer className="border-t border-white/10 bg-black py-16">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+          <div className="flex items-center gap-3 mb-8 opacity-80 mix-blend-screen">
+            <Image
+              src="/jamstation-logo.png"
+              alt="JamStation Logo"
+              width={60}
+              height={60}
+              className="grayscale brightness-200"
+            />
+          </div>
+          <div className="flex flex-wrap justify-center gap-8 mb-12 text-sm font-bold text-neutral-500 uppercase tracking-widest">
+            <Link href="#" className="hover:text-cyan-400 transition-colors">Manifesto</Link>
+            <Link href="#" className="hover:text-fuchsia-400 transition-colors">Tech Specs</Link>
+            <Link href="#" className="hover:text-lime-400 transition-colors">Community</Link>
+            <Link href="#" className="hover:text-white transition-colors">Legal</Link>
+          </div>
+          <p className="text-neutral-600 font-medium text-sm">
+            &copy; {new Date().getFullYear()} JAMSTATION. Vibe check passed.
+          </p>
         </div>
-        <p>&copy; {new Date().getFullYear()} JamStation platform. All rights reserved.</p>
       </footer>
     </div>
   );
 }
 
 // Separate component for the Auth form to keep it clean
-function SignInButton({ label = "Sign In", size = "sm" }: { label?: string, size?: "sm" | "lg" }) {
+function SignInButton({ label = "Sign In", size = "sm", isSecondary = false }: { label?: string, size?: "sm" | "lg", isSecondary?: boolean }) {
+  // Base classes for different sizes
+  const sizeClasses = size === "lg"
+    ? "px-8 py-4 text-lg"
+    : "px-6 py-2.5 text-sm";
+
+  // Visual style variants
+  const primaryStyle = size === "lg"
+    ? "bg-gradient-to-r from-fuchsia-500 to-cyan-500 hover:from-fuchsia-400 hover:to-cyan-400 text-white shadow-[0_0_20px_rgba(217,70,239,0.5)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:-translate-y-1"
+    : "bg-fuchsia-500/20 hover:bg-fuchsia-500/40 text-fuchsia-300 border border-fuchsia-500/30 hover:border-fuchsia-400 hover:shadow-[0_0_10px_rgba(217,70,239,0.3)]";
+
+  const secondaryStyle = size === "lg"
+    ? "border-2 border-white/20 hover:border-white/50 bg-black/50 hover:bg-white/5 text-white shadow-[0_0_10px_rgba(255,255,255,0.05)] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:-translate-y-1"
+    : "bg-transparent hover:bg-white/10 text-neutral-300 border border-white/10 hover:border-white/30";
+
+  const styleClasses = isSecondary ? secondaryStyle : primaryStyle;
+
   return (
     <form
       action={async () => {
         "use server";
         await signIn("google", { redirectTo: "/dashboard" });
       }}
+      className="w-full sm:w-auto"
     >
       <button
         type="submit"
-        className={`bg-white text-black font-semibold rounded-xl hover:bg-neutral-200 transition-all flex items-center gap-2
-          ${size === "lg" ? "px-8 py-4 text-lg" : "px-4 py-2 text-sm"}
-        `}
+        className={`w-full group font-black uppercase tracking-wider rounded-full flex items-center justify-center gap-3 transition-all duration-300 ${sizeClasses} ${styleClasses}`}
       >
-        <svg className="w-5 h-5" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 bg-white rounded-full p-0.5 shrink-0" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
             fill="#4285F4"
@@ -154,7 +240,7 @@ function SignInButton({ label = "Sign In", size = "sm" }: { label?: string, size
           />
         </svg>
         {label}
-        {size === "lg" && <ArrowRight className="w-5 h-5" />}
+        {!isSecondary && size === "lg" && <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform shrink-0 text-lime-400" />}
       </button>
     </form>
   );

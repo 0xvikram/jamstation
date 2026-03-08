@@ -2,6 +2,16 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { prisma } from "@/lib/prisma"
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      username?: string
+      onboardingCompleted?: boolean
+    } & import("next-auth").DefaultSession["user"]
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
   session: { strategy: "jwt" },
@@ -35,15 +45,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async jwt({ token, user }) {
-      // user is only defined on initial sign-in
-      if (user?.email) {
+      // user is only defined on initial sign-in, but token.email always exists.
+      // If we don't have dbId in the token yet (e.g. old session), fetch it!
+      if (!token.dbId && (user?.email || token?.email)) {
+        const emailToUse = user?.email || token?.email;
+        if (emailToUse) {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: emailToUse },
+            select: { id: true, username: true, onboardingCompleted: true },
+          })
+          if (dbUser) {
+            token.dbId = dbUser.id
+            token.username = dbUser.username
+            token.onboardingCompleted = dbUser.onboardingCompleted
+          }
+        }
+      } else if (user?.email) {
+        // Also update token on initial sign-in just in case
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email },
-          select: { id: true, username: true },
+          select: { id: true, username: true, onboardingCompleted: true },
         })
         if (dbUser) {
           token.dbId = dbUser.id
           token.username = dbUser.username
+          token.onboardingCompleted = dbUser.onboardingCompleted
         }
       }
       return token
@@ -58,16 +84,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // @ts-ignore
         session.user.username = token.username as string
       }
+      if (token.onboardingCompleted !== undefined) {
+        // @ts-ignore
+        session.user.onboardingCompleted = token.onboardingCompleted as boolean
+      }
       return session
     },
 
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
+
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard")
-      if (isOnDashboard) {
-        if (isLoggedIn) return true
-        return false
+      const isOnboarding = nextUrl.pathname.startsWith("/onboarding")
+
+      if (isOnDashboard || isOnboarding) {
+        return isLoggedIn;
       }
+
       return true
     },
   },

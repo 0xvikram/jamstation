@@ -17,6 +17,16 @@ model User {
   bio            String?
   createdAt      DateTime @default(now())
 
+  // Onboarding fields
+  onboardingCompleted Boolean @default(false)
+  gender              String?
+  musicalJourney      String?
+  favoriteSinger      String?
+  city                String?
+  instagram           String?
+  youtube             String?
+  spotify             String?
+
   hostedSessions  Session[]      @relation("HostRelation")
   requests        StageRequest[]
   receivedRatings Rating[]       @relation("RatedUser")
